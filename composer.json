@@ -1,0 +1,35 @@
+{
+  "name": "ipman3/think-migrate-seeder",
+  "description": "Custom migration and seeder system for ThinkPHP/FastAdmin",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "KHUT Lihong",
+      "email": "lihong@sfutureapps.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "topthink/framework": "^6.0",
+    "topthink/think-migration": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ipman3\\MigrateSeeder\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/ipman3/think-migrate-seeder"
+    }
+  ],
+  "extra": {
+    "think": {
+      "services": [
+        "ipman3\\MigrateSeeder\\provider"
+      ]
+    }
+  }
+}
