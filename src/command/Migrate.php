@@ -1,6 +1,6 @@
 <?php// src/command/Migrate.php
 
-namespace ipman3\MigrateSeeder\command;
+namespace Ipman3\MigrateSeeder\command;
 
 use think\console\Command;
 use think\console\Input;
@@ -19,7 +19,6 @@ class Migrate extends Command
     protected function execute(Input $input, Output $output)
     {
         // Similar to earlier logic, check your custom migration path here
-        $dir = root_path() . 'vendor/yourvendor/think-migrate-seeder/src/migration/';
-        ...
+        $dir = root_path() . 'ipman3/think-migrate-seeder/src/migration/';
     }
 }

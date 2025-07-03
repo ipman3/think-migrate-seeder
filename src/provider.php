@@ -1,15 +1,17 @@
 <?php
 // src/provider.php
+namespace Ipman3\MigrateSeeder;
+
 
 use think\Service;
 
-class provider extends Service
+class Provider extends Service
 {
     public function boot()
     {
         $this->commands([
-            \ipman3\MigrateSeeder\command\Migrate::class,
-            \ipman3\MigrateSeeder\command\Seed::class,
+            \Ipman3\MigrateSeeder\command\Migrate::class,
+            \Ipman3\MigrateSeeder\command\Seed::class,
         ]);
     }
 }

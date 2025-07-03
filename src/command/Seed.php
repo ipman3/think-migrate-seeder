@@ -1,6 +1,6 @@
 <?php
 
-namespace ipman3\MigrateSeeder\command;
+namespace Ipman3\MigrateSeeder\command;
 
 use think\console\Command;
 use think\console\Input;

@@ -16,19 +16,13 @@
   },
   "autoload": {
     "psr-4": {
-      "ipman3\\MigrateSeeder\\": "src/"
+      "Ipman3\\MigrateSeeder\\": "src/"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/ipman3/think-migrate-seeder"
-    }
-  ],
   "extra": {
     "think": {
       "services": [
-        "ipman3\\MigrateSeeder\\provider"
+        "Ipman3\\MigrateSeeder\\provider"
       ]
     }
   }
