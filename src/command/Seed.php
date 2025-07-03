@@ -1,45 +1,72 @@
 <?php
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: yunwuxin <448901948@qq.com>
+// +----------------------------------------------------------------------
 
-namespace Ipman3\MigrateSeeder\command;
+namespace think\migration\command;
 
-use think\console\Command;
-use think\console\Input;
-use think\console\Output;
+use Phinx\Seed\AbstractSeed;
+use Phinx\Util\Util;
+use think\migration\Command;
+use think\migration\Seeder;
 
-class Seed extends Command
+abstract class Seed extends Command
 {
-    protected function configure()
+
+    /**
+     * @var array
+     */
+    protected $seeds;
+
+    protected function getPath()
     {
-        $this->setName('seed')
-             ->addArgument('class', \think\console\input\Argument::OPTIONAL, 'Seeder class to run')
-             ->setDescription('Run seeders (all or specific)');
+        return $this->getConfig('path', ROOT_PATH . 'database') . DS . 'seeds';
     }
 
-    protected function execute(Input $input, Output $output)
+    public function getSeeds()
     {
-        $class = $input->getArgument('class');
+        if (null === $this->seeds) {
+            $phpFiles = glob($this->getPath() . DS . '*.php', defined('GLOB_BRACE') ? GLOB_BRACE : 0);
 
-        if ($class) {
-            $file = root_path() . "database/seeds/{$class}.php";
-            if (!is_file($file)) {
-                $output->error("Seeder file {$class}.php not found.");
-                return;
+            // filter the files to only get the ones that match our naming scheme
+            $fileNames = [];
+            /** @var Seeder[] $seeds */
+            $seeds = [];
+
+            foreach ($phpFiles as $filePath) {
+                if (Util::isValidSeedFileName(basename($filePath))) {
+                    // convert the filename to a class name
+                    $class             = pathinfo($filePath, PATHINFO_FILENAME);
+                    $fileNames[$class] = basename($filePath);
+
+                    // load the seed file
+                    /** @noinspection PhpIncludeInspection */
+                    require_once $filePath;
+                    if (!class_exists($class)) {
+                        throw new \InvalidArgumentException(sprintf('Could not find class "%s" in file "%s"', $class, $filePath));
+                    }
+
+                    // instantiate it
+                    $seed = new $class($this->input, $this->output);
+
+                    if (!($seed instanceof AbstractSeed)) {
+                        throw new \InvalidArgumentException(sprintf('The class "%s" in file "%s" must extend \Phinx\Seed\AbstractSeed', $class, $filePath));
+                    }
+
+                    $seeds[$class] = $seed;
+                }
             }
-            include_once $file;
-            $seeder = new $class();
-            $output->writeln("🌱 Running seeder: {$class}");
-            $seeder->run();
-            $output->writeln("✅ Done: {$class}");
-        } else {
-            $files = glob(root_path() . 'database/seeds/*.php');
-            foreach ($files as $file) {
-                $className = pathinfo($file, PATHINFO_FILENAME);
-                include_once $file;
-                $output->writeln("🌱 Seeding: {$className}");
-                $seeder = new $className();
-                $seeder->run();
-                $output->writeln("✅ Done: {$className}");
-            }
+
+            ksort($seeds);
+            $this->seeds = $seeds;
         }
+
+        return $this->seeds;
     }
 }
